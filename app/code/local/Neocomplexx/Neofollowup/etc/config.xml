@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Neocomplexx_Neofollowup>
+            <version>0.1.0</version>   
+        </Neocomplexx_Neofollowup>
+    </modules>
+
+    <global>
+        <blocks>
+            <neofollowup>
+                <class>Neocomplexx_Neofollowup_Block</class>
+            </neofollowup>
+        </blocks>
+        <helpers>
+            <neofollowup>
+                <class>Neocomplexx_Neofollowup_Helper</class>
+            </neofollowup>
+        </helpers>
+        <models>
+             <neofollowup>
+                <class>Neocomplexx_Neofollowup_Model</class>
+             </neofollowup>
+        </models>
+    </global>
+
+<!--
+    <default>
+        <neocomplexx_neofollowup>
+            <general>                
+                <custom_template>48</custom_template>
+            </general>
+        </neocomplexx_neofollowup>
+    </default>
+-->
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Neocomplexx_Neofollowup after="Mage_Adminhtml">Neocomplexx_Neofollowup</Neocomplexx_Neofollowup>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+
+    <crontab>
+        <jobs>
+            <neocomplexx_followup>
+                <schedule>
+                    <cron_expr>0 23 * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>neofollowup/observer::sendFollowUpEmails</model>
+                </run>
+            </neocomplexx_followup>
+        </jobs>
+    </crontab>
+
+</config>

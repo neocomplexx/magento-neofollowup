@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+ * Neocomplexx FollowUp
+-->
+
+
+<config>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <neocomplexx_neofollowup translate="title" module="neofollowup">
+                                        <title>Follow up Email</title>
+                                        <sort_order>140</sort_order>
+                                    </neocomplexx_neofollowup>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>
+

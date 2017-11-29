@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<config>
+	<modules>
+		<Neocomplexx_Neofollowup>
+			<active>true</active>
+			<codePool>local</codePool>
+		</Neocomplexx_Neofollowup>
+	</modules>
+</config>

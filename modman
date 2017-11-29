@@ -7,3 +7,4 @@ app/code/local/Neocomplexx/Neofollowup/etc/adminhtml.xml app/code/local/Neocompl
 app/code/local/Neocomplexx/Neofollowup/etc/config.xml app/code/local/Neocomplexx/Neofollowup/etc/config.xml
 app/code/local/Neocomplexx/Neofollowup/etc/system.xml app/code/local/Neocomplexx/Neofollowup/etc/system.xml
 app/design/adminhtml/default/default/template/neocomplexx/neofollowup/system/config/button.phtml app/design/adminhtml/default/default/template/neocomplexx/neofollowup/system/config/button.phtml
+app/etc/modules/Neocomplexx_Neofollowup.xml app/etc/modules/Neocomplexx_Neofollowup.xml

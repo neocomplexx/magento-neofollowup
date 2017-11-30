@@ -1,23 +1,5 @@
 <?php
-/**
- * Atwix
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
 
- * @category    Atwix Mod
- * @package     Atwix_Tweaks
- * @author      Atwix Core Team
- * @copyright   Copyright (c) 2012 Atwix (http://www.atwix.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- */
 
 class Neocomplexx_Neofollowup_Adminhtml_NeofollowupController extends Mage_Adminhtml_Controller_Action
 {
@@ -41,8 +23,7 @@ class Neocomplexx_Neofollowup_Adminhtml_NeofollowupController extends Mage_Admin
     public function generarReglaDescuento(){
 
 
-        $name = "neo follow up rule"; // name of Shopping Cart Price Rule
-        $websiteId = Mage::app()->getWebsite()->getId(); //asi se crean las otras
+        $name = "neo follow up rule"; // name of Shopping Cart Price Rule       
         $actionType = 'by_percent'; // discount by percentage (other options are: by_fixed, cart_fixed, buy_x_get_y)
         $discount = self::DISCOUNT_PERCENTAGE; // percentage discount
         $sku = Mage::helper(self::CONFIG_HELPER_NAME)->getAllSKUs();
@@ -53,6 +34,14 @@ class Neocomplexx_Neofollowup_Adminhtml_NeofollowupController extends Mage_Admin
         foreach ($groups as $Group) {
             $customerGroupIds[] = $Group->getCustomerGroupId();        
         }
+
+        //lo aplico a todas las websites
+        $websites = Mage::app()->getWebsites(); //asi se crean las otras
+        $websiteIds = array();
+        foreach ($websites as $id => $website) {
+            $websiteIds[] = $id;            
+        }
+
 
 
         $shoppingCartPriceRule = Mage::getModel('salesrule/rule');
@@ -82,7 +71,7 @@ class Neocomplexx_Neofollowup_Adminhtml_NeofollowupController extends Mage_Admin
         ->setUseAutoGeneration('1')
         ->setUsesPerCoupon('1')
         ->setCustomerGroupIds($customerGroupIds) //todos los grupos actuales. General es el 1
-        ->setWebsiteIds(array('5',))
+        ->setWebsiteIds($websiteIds)
         ->setCouponCode(NULL);
 
         //agrego una condicion en conditions para decir que la regla solo se aplique si en la carta se cumple que hay uno de estos productos (no seria tan necesario)

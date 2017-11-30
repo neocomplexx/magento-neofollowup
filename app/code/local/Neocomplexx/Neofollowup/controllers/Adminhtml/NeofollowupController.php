@@ -47,6 +47,13 @@ class Neocomplexx_Neofollowup_Adminhtml_NeofollowupController extends Mage_Admin
         $discount = self::DISCOUNT_PERCENTAGE; // percentage discount
         $sku = Mage::helper(self::CONFIG_HELPER_NAME)->getAllSKUs();
 
+        $groups = Mage::getModel('customer/group')->getCollection();
+        
+        $customerGroupIds = array();
+        foreach ($groups as $Group) {
+            $customerGroupIds[] = $Group->getCustomerGroupId();        
+        }
+
 
         $shoppingCartPriceRule = Mage::getModel('salesrule/rule');
 
@@ -74,7 +81,7 @@ class Neocomplexx_Neofollowup_Adminhtml_NeofollowupController extends Mage_Admin
         ->setCouponType('2')
         ->setUseAutoGeneration('1')
         ->setUsesPerCoupon('1')
-        ->setCustomerGroupIds(array('0','1','2','3','4','5','6','7','8','9','10','11',)) //todos los grupos actuales. General es el 1
+        ->setCustomerGroupIds($customerGroupIds) //todos los grupos actuales. General es el 1
         ->setWebsiteIds(array('5',))
         ->setCouponCode(NULL);
 

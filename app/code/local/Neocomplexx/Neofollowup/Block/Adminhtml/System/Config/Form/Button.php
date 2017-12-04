@@ -42,8 +42,8 @@ class Neocomplexx_Neofollowup_Block_Adminhtml_System_Config_Form_Button extends 
         $button = $this->getLayout()->createBlock('adminhtml/widget_button')
             ->setData(array(
             'id'        => 'neofollowup_button',
-            'label'     => $this->helper('adminhtml')->__('Generate Rule'), //es lo que va a decir el boton
-            'onclick'   => 'javascript:generateRule(); return false;' //generateRule esta definida en el template. Eso llama a getAjaxCheckUrl  
+            'label'     => $this->helper('adminhtml')->__('Generate Rule'), //is the button label that shows in the admin panel
+            'onclick'   => 'javascript:generateRule(); return false;' //generateRule is defined in the template. It calls getAjaxCheckUrl()  
         ));
 
         return $button->toHtml();

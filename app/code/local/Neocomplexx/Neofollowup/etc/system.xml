@@ -3,7 +3,7 @@
  * Neocomplexx Follow up
 -->
 <config>
-    <!--agregarlo si el modulo de popup no esta.
+    <!--add this if no other Neocomplexx Module is installed. It creates the neocomplexx tab in the admin panel
     <tabs>
         <neocomplexx translate="label" module="neofollowup">
             <label>Neocomplexx</label>
@@ -60,7 +60,7 @@
                         </custom_template>
                         <ruleid translate="label">
                             <label>Shopping Rule Id</label>
-                            <comment>Regla con la que se generan los codigos de descuento</comment>
+                            <comment>Rule with which discount codes are generated</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>5</sort_order>
                             <show_in_default>1</show_in_default>
@@ -78,7 +78,7 @@
                         </product_days>
                         <generate_rule translate="label">
                             <label>Generate Rule</label>
-                            <comment>Asegurarse de guardar antes de generar la regla</comment>
+                            <comment>Make sure to save the configuration before generating the new rule</comment>
                             <frontend_type>button</frontend_type>
                             <frontend_model>neofollowup/adminhtml_system_config_form_button</frontend_model>
                             <sort_order>20</sort_order>

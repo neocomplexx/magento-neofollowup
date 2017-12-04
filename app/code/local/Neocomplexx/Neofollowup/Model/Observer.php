@@ -2,20 +2,15 @@
 
 class Neocomplexx_Neofollowup_Model_Observer
 {
-
-
-
-
     const CONFIG_TEMPLATE_ID = "neocomplexx_neofollowup/general/custom_template";
-    const CONFIG_HELPER_NAME = "neofollowup";//equivalente a neofollowup/Data
+    const CONFIG_HELPER_NAME = "neofollowup";//equivalent to neofollowup/Data
 
     
     public function sendEmail($customerName, $recepientEmail, $productName, $productId, $couponCode)
     { 
-
-       //inicializo todas las variables del email       
-       $templateId = Mage::helper(self::CONFIG_HELPER_NAME)->getTemplateId();//a number id. Eg 48
-       $senderName = Mage::getStoreConfig('trans_email/ident_support/name');  //Get Sender Name from Store Email Addresses
+       //initialize the email variables
+       $templateId = Mage::helper(self::CONFIG_HELPER_NAME)->getTemplateId();   //a number id. Eg 48
+       $senderName = Mage::getStoreConfig('trans_email/ident_support/name');    //Get Sender Name from Store Email Addresses
        $senderEmail = Mage::getStoreConfig('trans_email/ident_support/email');  //Get Sender Email Id from Store Email Addresses
        $sender = array('name' => $senderName,
                    'email' => $senderEmail);
@@ -46,14 +41,14 @@ class Neocomplexx_Neofollowup_Model_Observer
         Mage::getModel('core/email_template')
         ->sendTransactional($templateId, $sender, $recepientEmail, $recepientName, $emailTemplateVariables, $storeId);
 
-        //if debug is enable, log that
+        //if debug is enabled, log it
         Mage::helper(self::CONFIG_HELPER_NAME)->log("email send to ".$customerName." at ".$recepientEmail);
 
     }
 
 
 
-    public function generarCupon(){
+    public function generateCoupon(){
 
         $generator = Mage::getModel('salesrule/coupon_massgenerator');
         $ruleId = Mage::helper(self::CONFIG_HELPER_NAME)->getShoppingCartRuleId();
@@ -90,7 +85,7 @@ class Neocomplexx_Neofollowup_Model_Observer
         ->getLastItem()
         ->getData('code');
 
-        Mage::helper(self::CONFIG_HELPER_NAME)->log("Se genero un cupon para la regla ".$ruleId." con codigo ".$couponCode);
+        Mage::helper(self::CONFIG_HELPER_NAME)->log("A coupon for the shopping rule ".$ruleId."was generated, with code ".$couponCode);
 
         return $couponCode;
 
@@ -99,7 +94,7 @@ class Neocomplexx_Neofollowup_Model_Observer
 
 
     
-    //Es la funcion que ejecuta el cron
+    //Is the function that the cron executes
     public function sendFollowUpEmails()
     { 
         $configHelper = Mage::helper(self::CONFIG_HELPER_NAME);
@@ -108,23 +103,23 @@ class Neocomplexx_Neofollowup_Model_Observer
         if ($isEnable)   {
 
             $followUpDays = $configHelper->getDaysPerProduct();
-            /*
-            followUpDays expect to have the format of 
+            /*$followUpDays will be a two dimension array with the following format 
                 [15] => [product1, product2, ...], //15 days
                 [20] => [product3, product4, ...], //20 days
                 ...
             */    
 
             foreach ($followUpDays as $days => $productArray)
-                {   //para cada uno de los dias hay que buscar las ordenes de ese dia. Necesito ir X cantidad de dias atras y tener el siguiente a ese dia
+                {   //For each of the days set in the module configuration, we need to search the orders of that day 
+                    //We need to go X days ago and have the following day to that one
 
                     $stringDay= '-'.$days.' days';
-                    $searchDay = date('Y-m-d', strtotime($stringDay)); //$days dias antes de hoy
+                    $searchDay = date('Y-m-d', strtotime($stringDay)); //$days days ago
                 
                     $nextDay = date('Y-m-d', strtotime($searchDay .' +1 day'));
 
 
-                    //busco las ordenes de ese dia
+                    //get the orders of that day
                     $orderCollection = Mage::getModel('sales/order')->getCollection()    
                     ->addAttributeToFilter('created_at', array('from' => $searchDay, 'to' => $nextDay))
                     ->addAttributeToFilter('state', 'complete')
@@ -145,21 +140,21 @@ class Neocomplexx_Neofollowup_Model_Observer
                         );}                     
 
 
-                        //comparar si alguno de los items que compro estan en $productArray. Si esta, usar sendEmail(...)
-
                         $customerName = $order->getCustomerFirstname();
                         $recepientEmail = $order->getCustomerEmail();
-                        
+
+
+                        //check if any of the items bought are in $productArray. If any, use sendEmail(...)
                         foreach ($productArray as $productSku) {
                             
-                            //por cada producto de la configuracion, busco si esta en la orden                        
+                            //for each product set in the configuration, search if it is in the order
                             foreach($items as $item) {
                                 if ($productSku == $item['sku']) {
                                     $productId  = $item['id'];
                                     $productName = $item['name'];
-                                    $couponCode = $this->generarCupon();
+                                    $couponCode = $this->generateCoupon();
                                     $this->sendEmail($customerName, $recepientEmail,$productName,$productId, $couponCode);
-                                    break 2; //encontre un producto. A ese cliente ya le mando un mail y no necesito seguir buscando. Salgo de los 2 foreach
+                                    break 2; //I found a product match. Send an email to this customer and dont keep searching. Leave the 2 foreach
                                 }
                             }
 
@@ -168,16 +163,16 @@ class Neocomplexx_Neofollowup_Model_Observer
 
 
 
-                    }//cierre foreach de las ordenes de compra
+                    }//foreach closure of the orders of the days
 
                     
 
 
-                }//cierre foreach para cada uno de los dias que estan configurados en el panel de administracion
+                }// foreach closure foreach of the days set in the module configuration on admin panel
 
 
        
-            }//cierre if enable
+            }//if enable closure
 
 
     }

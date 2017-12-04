@@ -79,20 +79,22 @@ class Neocomplexx_Neofollowup_Helper_Data extends Mage_Core_Helper_Abstract
 	 public function setShoppingCartRuleId($ruleId)
 	 {
 		Mage::getModel('core/config')->saveConfig(self::CONFIG_RULE_ID, $ruleId); 
-		Mage::getModel('core/config')->cleanCache(); //borrar la cache o queda el valor anterior
+		Mage::getModel('core/config')->cleanCache(); //clean the cache to delete previous value
 	 }
 
 
 
 
 	/**
-	 * get the follow up values order by days
+	 * get the follow up days and products order by days
 	 *
-	 * @return 
+	 * @return two dimension array with the days as keys and an array of sku products as values
 	 */
 	 public function getDaysPerProduct()
 	 {
-		$daysArray = array();/*order the product configuration by day. Expect to have the format of 
+		$daysArray = array();
+		/*order the product configuration by day. $daysArray will be a two dimension array with the following format 
+			[days] => [productA, productB, ...],
 			[15] => [product1, product2, ...], //15 days
 			[20] => [product3, product4, ...], //20 days
 			...
@@ -130,14 +132,14 @@ class Neocomplexx_Neofollowup_Helper_Data extends Mage_Core_Helper_Abstract
 
 
 
-	 	/**
-	 * va a devolver un string que tenga los skus que estan puestos en la configuracion
+	/**
+	 * Return a String with all products skus set in the module configuration
 	 *
-	 * @return 
+	 * @return string
 	 */
 	 public function getAllSKUs()
 	 {
-		$skuString = ""; //va a devolver los skus
+		$skuString = ""; 
 
 
 		$daysPerProduct = Mage::getStoreConfig(self::CONFIG_DAYS_PER_PRODUCT);
@@ -149,7 +151,7 @@ class Neocomplexx_Neofollowup_Helper_Data extends Mage_Core_Helper_Abstract
 					
 					$skuString = $skuString.', '. trim($product);
 				}
-				$skuString = substr($skuString,2);//le saco el ", " inicial 
+				$skuString = substr($skuString,2);//remove the initial ", " 
 
             } else {
                 // handle unserializing errors here

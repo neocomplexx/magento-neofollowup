@@ -4,8 +4,8 @@
 class Neocomplexx_Neofollowup_Adminhtml_NeofollowupController extends Mage_Adminhtml_Controller_Action
 {
 
-    const CONFIG_HELPER_NAME = "neofollowup";//equivalente a neofollowup/Data
-    const DISCOUNT_PERCENTAGE = 10;//usado en la regla
+    const CONFIG_HELPER_NAME = "neofollowup";//equivalent to neofollowup/Data
+    const DISCOUNT_PERCENTAGE = 10; //used in the generated rule
 
     /**
      * Return some checking result
@@ -14,13 +14,17 @@ class Neocomplexx_Neofollowup_Adminhtml_NeofollowupController extends Mage_Admin
      */
     public function generateRuleAction()
     {
-        $result = $this->generarReglaDescuento();
-        //$result tiene el id de la regla generada
+        $result = $this->generateDiscountRule();
+        //$result is the generated rule id
         Mage::app()->getResponse()->setBody($result);
     }
 
-
-    public function generarReglaDescuento(){
+    /**
+     * Generate the Shopping Cart Price Rule
+     *
+     * @return int generated Rule Id
+     */
+    public function generateDiscountRule(){
 
 
         $name = "neo follow up rule"; // name of Shopping Cart Price Rule       
@@ -30,13 +34,14 @@ class Neocomplexx_Neofollowup_Adminhtml_NeofollowupController extends Mage_Admin
 
         $groups = Mage::getModel('customer/group')->getCollection();
         
+        //apply it to every customer groups
         $customerGroupIds = array();
         foreach ($groups as $Group) {
             $customerGroupIds[] = $Group->getCustomerGroupId();        
         }
 
-        //lo aplico a todas las websites
-        $websites = Mage::app()->getWebsites(); //asi se crean las otras
+        //apply it to all the websites
+        $websites = Mage::app()->getWebsites(); 
         $websiteIds = array();
         foreach ($websites as $id => $website) {
             $websiteIds[] = $id;            
@@ -53,7 +58,7 @@ class Neocomplexx_Neofollowup_Adminhtml_NeofollowupController extends Mage_Admin
         ->setToDate(NULL)
         ->setUsesPerCustomer('0')
         ->setIsActive('1')
-        ->setConditionsSerialized('')//condiciones y acciones se ponen en vacias. Hay que agregarlas por separado
+        ->setConditionsSerialized('')//leave the conditions and actions empty. We need to add them separately
         ->setActionsSerialized('')
         ->setStopRulesProcessing('0')
         ->setIsAdvanced('1')
@@ -70,33 +75,32 @@ class Neocomplexx_Neofollowup_Adminhtml_NeofollowupController extends Mage_Admin
         ->setCouponType('2')
         ->setUseAutoGeneration('1')
         ->setUsesPerCoupon('1')
-        ->setCustomerGroupIds($customerGroupIds) //todos los grupos actuales. General es el 1
+        ->setCustomerGroupIds($customerGroupIds) //Every customer group. General is number 1
         ->setWebsiteIds($websiteIds)
         ->setCouponCode(NULL);
 
-        //agrego una condicion en conditions para decir que la regla solo se aplique si en la carta se cumple que hay uno de estos productos (no seria tan necesario)
-        
+
+        //add a condition to rule conditions: Only apply the rule if the shopping cart has uno of these products (here we can avoid this step)        
         $found = Mage::getModel('salesrule/rule_condition_product_found')
-            ->setType('salesrule/rule_condition_product_found') //"product attribute combination" que despues dice como "if an item is ..."
+            ->setType('salesrule/rule_condition_product_found') //"product attribute combination" which says "if an item is ..."
             ->setValue(1)           // 1 == FOUND, 0 == NOT FOUND
-            ->setAggregator('all'); // match ALL conditions. Podria ser ANY
+            ->setAggregator('all'); // match ALL conditions. Could be ANY
         $shoppingCartPriceRule->getConditions()->addCondition($found);
 
         $skuCond = Mage::getModel('salesrule/rule_condition_product')
             ->setType('salesrule/rule_condition_product')
             ->setAttribute('sku') 
-            ->setOperator('()')//si quiero uno solo usar '=='. El '()' significa is one of. Lo saco de inspeccionar la lista desplegable en el panel de admin
+            ->setOperator('()')//If is only one product, use '=='. '()' means "is one of". See other options in loadOperatorOptions() in app/code/core/Mage/SalesRule/Model/Rule/Condition/Product/Subselect.php or inspect  the drop-down list in the admin panel, when creating the shopping rule manually
             ->setValue($sku);
 
-        $found->addCondition($skuCond);   //se agrega a found. Es decir: "Si se encuentra un item que cumpla con todas las condiciones: Que el sku sea uno de la lista"
+        $found->addCondition($skuCond);   //add condition to found. It means: "If an item is found that meets all the conditions: The sku is one of the list"
 
 
-
-        //agrego la condicion en la parte de actions para decir que la regla se aplique solo a esos productos
+        //add a condition to actions section. Only apply the rule discount to these products
         $skuCond = Mage::getModel('salesrule/rule_condition_product')
         ->setType('salesrule/rule_condition_product')
         ->setAttribute('sku')
-        ->setOperator('()')//si quiero uno solo usar '=='. El '()' significa is one of. Lo saco de inspeccionar la lista desplegable en el panel de admin
+        ->setOperator('()')//If is only one product, use '=='. '()' means "is one of". See other options in loadOperatorOptions() in app/code/core/Mage/SalesRule/Model/Rule/Condition/Product/Subselect.php or inspect  the drop-down list in the admin panel, when creating the shopping rule manually
         ->setValue($sku);
         $shoppingCartPriceRule->getActions()->addCondition($skuCond);  
 
@@ -107,7 +111,7 @@ class Neocomplexx_Neofollowup_Adminhtml_NeofollowupController extends Mage_Admin
 
         Mage::helper(self::CONFIG_HELPER_NAME)->log("Se creo la regla ".$ruleId);
 
-        //guardo el id en la configuracion para que se use de ahora en mas esta regla
+        //Save the rule id in the configuration to use this rule from now on
         Mage::helper(self::CONFIG_HELPER_NAME)->setShoppingCartRuleId($ruleId);
 
         return $ruleId;
